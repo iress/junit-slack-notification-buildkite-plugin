@@ -1,0 +1,26 @@
+version: "3"
+services:
+  slack-notification:
+    image: slack-notification:build-${BUILDKITE_BUILD_NUMBER}
+    environment:
+      SLACK_TOKEN: ${BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_TOKEN}
+      SLACK_CHANNEL: ${BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_CHANNEL}
+      BUILDKITE_BUILD_NUMBER: ${BUILDKITE_BUILD_NUMBER}
+      BUILDKITE_BUILD_URL: ${BUILDKITE_BUILD_URL}
+      BUILDKITE_PIPELINE_NAME: ${BUILDKITE_PIPELINE_NAME}
+      BUILDKITE_BRANCH: ${BUILDKITE_BRANCH}
+      BUILDKITE_MESSAGE: ${BUILDKITE_MESSAGE}
+      BUILDKITE_COMMIT: ${BUILDKITE_COMMIT}
+      BUILDKITE_BUILD_AUTHOR: ${BUILDKITE_BUILD_AUTHOR}
+    command: node /app/dist/index.js
+    volumes:
+      - $ARTIFACTS_DIR:/app/reports
+  lint:
+    image: buildkite/plugin-linter
+    command: ['--id', 'iress/junit-slack-notification']
+    volumes:
+      - ".:/plugin:ro"
+  tests:
+    image: buildkite/plugin-tester
+    volumes:
+      - ".:/plugin:rw"
