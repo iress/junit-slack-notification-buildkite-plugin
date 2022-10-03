@@ -1,0 +1,30 @@
+#!/bin/bash
+
+PLUGIN_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)/.."
+
+echo "--- :junit: Download the junits XML"
+
+ARTIFACTS_DIR="$(pwd)/$(mktemp -d "junits-slack-notification-plugin-artifacts-tmp.XXXXXXXXXX")"
+export ARTIFACTS_DIR
+
+function cleanup {
+  rm -rf "${ARTIFACTS_DIR}"
+}
+
+trap cleanup EXIT
+
+echo "$PLUGIN_DIR"
+cd "$PLUGIN_DIR"
+
+# Allows files download to fail (FATAL  Failed to download artifacts: No artifacts found for downloading)
+# and send "No tests data generated!" message to slack in this scenario
+buildkite-agent artifact download \
+  "${BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_ARTIFACTS}" \
+  "$ARTIFACTS_DIR"
+
+set -euo pipefail
+echo "--- Compile Typescript"
+make build
+
+echo "--- Send message to ${BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_CHANNEL}"
+make run

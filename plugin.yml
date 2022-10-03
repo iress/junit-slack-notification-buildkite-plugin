@@ -1,0 +1,22 @@
+name: Junit_Slack_Notification
+description: Notify Slack with a summary of the Junit build
+author: https://github.com/iress
+main: index.js
+version: 1.0
+requirements:
+  - docker
+configuration:
+  properties:
+    artifacts:
+      type: string
+    SLACK_TOKEN:
+      type: string
+    SLACK_CHANNEL:
+      type: string
+    DOCKER_CACHE:
+      type: string
+  required:
+    - artifacts
+    - SLACK_TOKEN
+    - SLACK_CHANNEL
+  additionalProperties: false

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<testsuite name="testsuite name" package="" timestamp="2021-03-31T13:50:26" id="0"
+           hostname="9ebcadfd370b" tests="3" errors="0" failures="1" time="3.372">
+    <properties>
+        <property name="browser.fullName"
+                  value="Mozilla/5.0"/>
+    </properties>
+    <testcase
+            name="testcase name"
+            time="0.026"
+            classname="testcase classname"/>
+    <testcase
+            name="testcase name"
+            time="0.014"
+            classname="testcase classname"/>
+
+    <testcase name="testcase name" time="0.026"
+              classname="testcase classname">
+        <failure type="">Error Unexpected</failure>
+    </testcase>
+    <system-out><![CDATA[a system-err error here]]></system-out>
+    <system-err/>
+</testsuite>

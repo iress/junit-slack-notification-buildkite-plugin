@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="0"
+            failures="1"
+            tests="2">
+
+    <testsuite name="testsuite name"
+               errors="0" failures="1" hostname="" id="" package="register" skipped="1"
+               tests="2" time="128.2" timestamp="">
+        <testcase name="testcase 1 name (failed)"
+                  classname="testcase classname" time="128.2" assertions="8">
+            <failure
+                    message="failure message">failure body</failure>
+            <system-out>system-out body</system-out>
+        </testcase>
+        <testcase
+                name="testcase 2 name (skipped)"
+                classname="testcase classname">
+            <skipped/>
+        </testcase>
+        <testcase name="testcase 3 name (pass)" classname="testcase classname" time="21.68" assertions="36">
+        </testcase>
+    </testsuite>
+</testsuites>
