@@ -15,7 +15,7 @@ configuration:
       type: string
     DOCKER_CACHE:
       type: string
-    slack-token-env-name:
+    SLACK_TOKEN_ENV_NAME:
       type: string
   required:
     - artifacts
