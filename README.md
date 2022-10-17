@@ -32,14 +32,17 @@ steps:
 The file pattern to use to retrieve JUnit XML reports 
 e.g. **/*.xml
 
-### `SLACK_TOKEN` (Required, string)
-
-The token of your Slack application which is allows chatting on your Slack organisation. 
-
 ### `SLACK_CHANNEL` (Required, string)
 
 Name of the public Slack channel which your bot will report _e.g._ `#junit_bot_testing`
 
+### `SLACK_TOKEN_ENV_NAME` (String)
+
+Name of the environment variable that contains the Slack API token. Default value: `"SLACK_TOKEN"`
+
+### `SLACK_TOKEN` (string)
+
+The token of your Slack application which is allows chatting on your Slack organisation. 
 
 ### `DOCKER_CACHE` (string) 
 

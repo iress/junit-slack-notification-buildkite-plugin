@@ -2,6 +2,20 @@
 # Add excecuting permission to run
 # git update-index --chmod=+x hooks/command
 
+TOKEN_ENV_NAME="${BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_TOKEN_ENV_NAME:-SLACK_TOKEN}"
+TOKEN_VALUE=$(eval "echo \${$TOKEN_ENV_NAME:-}")
+
+if [[ -z "${TOKEN_VALUE}" ]]; then
+  echo "Missing $SLACK_TOKEN_ENV_NAME environment variable... looking for alternative"
+  TOKEN_VALUE="${BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_TOKEN}"
+fi
+
+export TOKEN_VALUE
+if [[ -z "${TOKEN_VALUE}" ]]; then
+  echo "Missing Slack token: either use \$SLACK_TOKEN or \$SLACK_TOKEN_ENV_NAME to set environment variable"
+  exit 1
+fi
+
 PLUGIN_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)/.."
 
 echo "--- :junit: Download the junits XML"
