@@ -16,11 +16,11 @@ services:
     volumes:
       - $ARTIFACTS_DIR:/app/reports
   lint:
-    image: buildkite/plugin-linter
+    image: buildkite/plugin-linter:latest
     command: ['--id', 'iress/junit-slack-notification']
     volumes:
       - ".:/plugin:ro"
   tests:
-    image: buildkite/plugin-tester
+    image: buildkite/plugin-tester:v3.0.1
     volumes:
       - ".:/plugin:rw"
