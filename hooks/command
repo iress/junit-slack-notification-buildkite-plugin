@@ -6,7 +6,7 @@ TOKEN_ENV_NAME="${BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_TOKEN_ENV_NAME
 TOKEN_VALUE=$(eval "echo \${$TOKEN_ENV_NAME:-}")
 
 if [[ -z "${TOKEN_VALUE}" ]]; then
-  echo "Missing $SLACK_TOKEN_ENV_NAME environment variable... looking for alternative"
+  echo "Missing \$SLACK_TOKEN_ENV_NAME environment variable... looking for alternative"
   TOKEN_VALUE="${BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_TOKEN}"
 fi
 
@@ -29,7 +29,6 @@ function cleanup {
 
 trap cleanup EXIT
 
-echo "$PLUGIN_DIR"
 cd "$PLUGIN_DIR"
 
 # Allows files download to fail (FATAL  Failed to download artifacts: No artifacts found for downloading)
