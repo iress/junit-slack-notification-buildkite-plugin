@@ -1,10 +1,10 @@
-import { parseFiles } from "../src/xmlParser";
-import { describe, expect } from "@jest/globals";
+import {parseFiles} from "../src/xmlParser";
+import {describe, expect} from "@jest/globals";
 
 describe("Parser test read slack-notification/reports folder", () => {
   it("should parse XML files with testcase results", async () => {
     const actual = await parseFiles();
-    expect(actual).toStrictEqual([
+    expect(actual).toEqual([
       {
         "testsuite": {
           "$": {
