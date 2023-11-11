@@ -11,7 +11,7 @@
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix"
   },
   "dependencies": {
-    "@slack/web-api": "^6.7.2",
+    "@slack/web-api": "^6.9.1",
     "async": "^3.2.4",
     "fs": "0.0.1-security",
     "lodash": ">=4.17.21",
