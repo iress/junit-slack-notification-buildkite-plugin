@@ -1,7 +1,11 @@
 version: "3"
 services:
   slack-notification:
-    image: slack-notification:build-${BUILDKITE_BUILD_NUMBER}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - DOCKER_CACHE
     environment:
       SLACK_TOKEN: ${TOKEN_VALUE}
       SLACK_CHANNEL: ${BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_CHANNEL}

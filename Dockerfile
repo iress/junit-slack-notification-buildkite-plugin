@@ -1,5 +1,5 @@
 ARG DOCKER_CACHE
-FROM ${DOCKER_CACHE}node:14-alpine
+FROM ${DOCKER_CACHE}node:20-alpine
 
 ADD . /app
 
