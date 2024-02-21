@@ -19,7 +19,7 @@ steps:
     depends_on: my-test
     allow_dependency_failure: true
     plugins:
-      - iress/junit-slack-notification#v1.0.0:
+      - iress/junit-slack-notification#v1.0.3:
           artifacts: "**/*.xml"
           SLACK_TOKEN: "xoxb-xxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
           SLACK_CHANNEL: "#junit_bot_testing"
