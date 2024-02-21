@@ -1,11 +1,7 @@
 version: "3"
 services:
   slack-notification:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - DOCKER_CACHE
+    image: ${BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_DOCKER_CACHE}node:21
     environment:
       SLACK_TOKEN: ${TOKEN_VALUE}
       SLACK_CHANNEL: ${BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_CHANNEL}
@@ -16,9 +12,14 @@ services:
       BUILDKITE_MESSAGE: ${BUILDKITE_MESSAGE}
       BUILDKITE_COMMIT: ${BUILDKITE_COMMIT}
       BUILDKITE_BUILD_AUTHOR: ${BUILDKITE_BUILD_AUTHOR}
-    command: node /app/dist/index.js
+      NPM_REGISTRY: ${NPM_REGISTRY}
+      NPM_TOKEN: ${NPM_TOKEN}
+    command: /app/scripts/run.sh
     volumes:
       - $ARTIFACTS_DIR:/app/reports
+      - .:/app
+    working_dir: /app
+    entrypoint: ["bash"]
   lint:
     image: buildkite/plugin-linter:latest
     command: ['--id', 'iress/junit-slack-notification']
