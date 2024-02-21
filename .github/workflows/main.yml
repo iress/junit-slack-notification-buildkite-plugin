@@ -33,8 +33,10 @@ jobs:
         run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Run
-        run: npm run
+      - name: Build Typescript
+        run: npm run build
+      - name: Run Unit tests
+        run: npm run test
       - name: buildkite/plugin-linter
         run: make linter
       - name: buildkite/plugin-tester
