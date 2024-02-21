@@ -38,8 +38,6 @@ buildkite-agent artifact download \
   "$ARTIFACTS_DIR"
 
 set -euo pipefail
-echo "--- Compile Typescript"
-make build
 
 echo "--- Send message to ${BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_CHANNEL}"
 make run
