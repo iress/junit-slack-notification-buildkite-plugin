@@ -28,11 +28,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 'current'
-          registry-url: ${{ secret.NPM_REGISTRY }}
+          registry-url: ${{ secrets.NPM_REGISTRY }}
       - name: npm install
         run: npm ci
         env:
-          NODE_AUTH_TOKEN: ${{ secret.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Run
         run: npm run
       - name: buildkite/plugin-linter
