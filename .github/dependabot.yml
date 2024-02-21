@@ -1,4 +1,10 @@
 version: 2
+registries:
+  npm-private-registry:
+    type: npm-registry
+    url: https://artifactory.jfrog.iress.online/artifactory/api/npm/iress-npm
+    token: ${{ secrets.NPM_TOKEN }}
+
 updates:
 - package-ecosystem: npm
   directory: "/"
@@ -6,3 +12,5 @@ updates:
     interval: daily
     time: "10:00"
   open-pull-requests-limit: 50 # only allow security update
+  registries:
+    - npm-private-registry
