@@ -24,12 +24,15 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
-      - name: install node v20
+      - name: install Current node version
         uses: actions/setup-node@v4
         with:
           node-version: 'current'
+          registry-url: ${{ secret.NPM_REGISTRY }}
       - name: npm install
         run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secret.NPM_TOKEN }}
       - name: Run
         run: npm run
       - name: buildkite/plugin-linter
