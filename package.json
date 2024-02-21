@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
-    "@types/lodash": "^4.14.186",
+    "@types/lodash": "^4.14.202",
     "@types/xml2js": "^0.4.11",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
