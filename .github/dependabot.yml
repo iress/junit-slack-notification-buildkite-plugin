@@ -2,8 +2,8 @@ version: 2
 registries:
   npm-private-registry:
     type: npm-registry
-    url: "${{ secrets.NPM_REGISTRY }}"
-    token: "${{ secrets.NPM_TOKEN }}"
+    url: https://artifactory.jfrog.iress.online/artifactory/api/npm/iress-npm
+    token: ${{ secrets.NPM_TOKEN }}
 
 updates:
 - package-ecosystem: npm
