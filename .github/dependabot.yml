@@ -2,8 +2,8 @@ version: 2
 registries:
   npm-private-registry:
     type: npm-registry
-    url: ${{ secrets.NPM_REGISTRY }}
-    token: ${{ secrets.NPM_TOKEN }}
+    url: "${{ secrets.NPM_REGISTRY }}"
+    token: "${{ secrets.NPM_TOKEN }}"
 
 updates:
 - package-ecosystem: npm
