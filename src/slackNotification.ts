@@ -45,11 +45,11 @@ export const getTextSummaryLine = (result: JunitResult): string => {
     return "No tests data generated!";
 };
 
-export const getText = (result: JunitResult): string => {
-    return `${getEmoji(result)} *${result.buildkite_pipeline} (${result.git_branch_name}) #${result.build_id}*\n${result.git_comment} - ${result.git_username} (${result.git_log})\n*${getTextSummaryLine(result)}*\n<${result.build_url}|View build>`;
+export const getCommitText = (result: JunitResult): string => {
+    return `${getEmoji(result)} *${result.buildkite_pipeline} (${result.git_branch_name}) #${result.build_id}*\n${result.git_comment} - ${result.git_username} (${result.git_log})`;
 };
 
-export const getSlackMessageAttachments = (result: JunitResult): any => {
+export const getSlackMessageAttachments = (result: JunitResult): unknown  => {
     return [
         {
             "color": getColor(result),
@@ -58,7 +58,22 @@ export const getSlackMessageAttachments = (result: JunitResult): any => {
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": getText(result)
+                        "text": getCommitText(result)
+                    },
+                    "accessory": {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "View build"
+                        },
+                        "url": result.build_url
+                    }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "text": `*${getTextSummaryLine(result)}*`,
+                        "type": "mrkdwn"
                     }
                 }
             ]
@@ -66,7 +81,7 @@ export const getSlackMessageAttachments = (result: JunitResult): any => {
     ];
 };
 
-export const sendResultToSlack = async (slackToken: string, channel: string, junitResult: JunitResult): Promise<any> => {
+export const sendResultToSlack = async (slackToken: string, channel: string, junitResult: JunitResult): Promise<unknown> => {
     let goodToken = "";
     for (let i = 0; i < slackToken.length; i++) {
         if (checkChar(slackToken[i])) {
@@ -76,7 +91,7 @@ export const sendResultToSlack = async (slackToken: string, channel: string, jun
             console.warn(`Invalid character in token - code: ${slackToken.charCodeAt(i)} => '${slackToken[i]}'`);
         }
     }
-    return sendSlackMessage(goodToken, channel, getSlackMessageAttachments(junitResult));
+    return sendSlackMessage(goodToken, channel, getSlackMessageAttachments(junitResult) as any[]);
 };
 
 const checkChar = (c: string) => {
