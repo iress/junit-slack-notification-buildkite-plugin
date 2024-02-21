@@ -23,17 +23,15 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - name: install node v14
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - name: install node v20
+        uses: actions/setup-node@v4
         with:
-          node-version: 14
+          node-version: 'current'
       - name: npm install
         run: npm ci
-      - name: Build
-        run: npm run build
-      - name: Test
-        run: npm run test
+      - name: Run
+        run: npm run
       - name: buildkite/plugin-linter
         run: make linter
       - name: buildkite/plugin-tester
