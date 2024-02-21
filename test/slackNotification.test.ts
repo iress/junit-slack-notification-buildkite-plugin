@@ -54,16 +54,31 @@ describe("Failed test", () => {
 
         expect(actual).toStrictEqual([
             {
-                "color": "#B94A48",
                 "blocks": [
                     {
-                        "type": "section",
+                        "accessory": {
+                            "text": {
+                                "text": "View build",
+                                "type": "plain_text"
+                            },
+                            "type": "button",
+                            "url": "https://www.iress.com/mybuild"
+                        },
                         "text": {
-                            "type": "mrkdwn",
-                            "text": ":-1: :-1: *My Build pipeline (hac-483_branch) #123*\nInitial commit - F T (a1b2c3)\n*Tests failed: 3, passed: 1, ignored: 2*\n<https://www.iress.com/mybuild|View build>"
-                        }
+                            "text": ":-1: :-1: *My Build pipeline (hac-483_branch) #123*\nInitial commit - F T (a1b2c3)",
+                            "type": "mrkdwn"
+                        },
+                        "type": "section"
+                    },
+                    {
+                        "text": {
+                            "text": "*Tests failed: 3, passed: 1, ignored: 2*",
+                            "type": "mrkdwn"
+                        },
+                        "type": "section"
                     }
-                ]
+                ],
+                "color": "#B94A48"
             }
         ]);
 
@@ -110,8 +125,23 @@ describe("Passed test", () => {
             {
                 "blocks": [
                     {
+                        "accessory": {
+                            "text": {
+                                "text": "View build",
+                                "type": "plain_text"
+                            },
+                            "type": "button",
+                            "url": "https://www.iress.com/myotherbuild"
+                        },
                         "text": {
-                            "text": ":+1: *My Build other pipeline (hac-483_other_branch) #456*\nSecond commit - Frankly Chilled (a1b2c3d4)\n*Tests passed: 1*\n<https://www.iress.com/myotherbuild|View build>",
+                            "text": ":+1: *My Build other pipeline (hac-483_other_branch) #456*\nSecond commit - Frankly Chilled (a1b2c3d4)",
+                            "type": "mrkdwn"
+                        },
+                        "type": "section"
+                    },
+                    {
+                        "text": {
+                            "text": "*Tests passed: 1*",
                             "type": "mrkdwn"
                         },
                         "type": "section"
@@ -154,11 +184,26 @@ describe("No tests", () => {
             {
                 "blocks": [
                     {
+                        "type": "section",
                         "text": {
-                            "text": ":-1: *My Build other pipeline (hac-483_other_branch) #789*\nSecond commit - Frankly Chilled (a1b2c3d4)\n*No tests data generated!*\n<https://www.iress.com/myotherbuild|View build>",
-                            "type": "mrkdwn"
+                            "type": "mrkdwn",
+                            "text": ":-1: *My Build other pipeline (hac-483_other_branch) #789*\nSecond commit - Frankly Chilled (a1b2c3d4)"
                         },
-                        "type": "section"
+                        "accessory": {
+                            "type": "button",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "View build"
+                            },
+                            "url": "https://www.iress.com/myotherbuild"
+                        }
+                    },
+                    {
+                        "type": "section",
+                        "text": {
+                            "text": "*No tests data generated!*",
+                            "type": "mrkdwn"
+                        }
                     }
                 ],
                 "color": "#B94A48"
@@ -174,23 +219,37 @@ describe("No tests", () => {
         await sendResultToSlack(SLACK_TOKEN, SLACK_CHANNEL, result);
 
         // verify call to chat
-        const attachments = [{
-            "blocks": [
-                {
-                    "text": {
-                        "text": ":-1: *My Build other pipeline (hac-483_other_branch) #789*\n" +
-                            "Second commit - Frankly Chilled (a1b2c3d4)\n" +
-                            "*No tests data generated!*\n" +
-                            "<https://www.iress.com/myotherbuild|View build>",
-                        "type": "mrkdwn",
+        const attachments = [
+            {
+                "color": "#B94A48",
+                "blocks": [
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": ":-1: *My Build other pipeline (hac-483_other_branch) #789*\nSecond commit - Frankly Chilled (a1b2c3d4)"
+                        },
+                        "accessory": {
+                            "type": "button",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "View build"
+                            },
+                            "url": "https://www.iress.com/myotherbuild"
+                        }
                     },
-                    "type": "section",
-                },
-            ],
-            "color": "#B94A48",
-        }
+                    {
+                        "type": "section",
+                        "text": {
+                            "text": "*No tests data generated!*",
+                            "type": "mrkdwn"
+                        }
+                    }
+                ]
+            }
         ];
-        expect(_postMessageMock).toHaveBeenCalledWith({channel: SLACK_CHANNEL, attachments, text: ""});
+        const expected = {channel: SLACK_CHANNEL, attachments, text: ""};
+        expect(_postMessageMock).toHaveBeenCalledWith(expected);
 
     });
 });
