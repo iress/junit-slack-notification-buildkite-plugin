@@ -9,6 +9,14 @@ configuration:
   properties:
     artifacts:
       type: string
+    test_suites:
+      type: array
+      minimum: 1
+      properties:
+        name:
+          type: string
+        artifacts:
+          type: string
     SLACK_TOKEN:
       type: string
     SLACK_CHANNEL:
@@ -17,7 +25,11 @@ configuration:
       type: string
     SLACK_TOKEN_ENV_NAME:
       type: string
-  required:
-    - artifacts
-    - SLACK_CHANNEL
+  anyOf:
+    - required:
+        - artifacts
+        - SLACK_CHANNEL
+    - required:
+        - test_suites
+        - SLACK_CHANNEL
   additionalProperties: false
