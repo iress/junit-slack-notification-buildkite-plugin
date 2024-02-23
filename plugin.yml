@@ -12,6 +12,7 @@ configuration:
     test_suites:
       type: array
       minimum: 1
+      maximum: 6
       properties:
         name:
           type: string

@@ -30,10 +30,7 @@ export const run = async () => {
 
     const results:JunitResult[] = [];
 
-    const TEST_SUITES_0_ARTIFACTS = process.env.TEST_SUITES_0_ARTIFACTS || "";
-
-
-    if (TEST_SUITES_0_ARTIFACTS !== "") {
+    if (process.env.TEST_SUITES_0_ARTIFACTS || "" !== "") {
         let i = 0;
         while ((process.env[`TEST_SUITES_${i}_ARTIFACTS`] || "") !== "") {
             console.log(`Checking ${process.env[`TEST_SUITES_${i}_NAME`] || process.env[`TEST_SUITES_${i}_ARTIFACTS`]}`);
