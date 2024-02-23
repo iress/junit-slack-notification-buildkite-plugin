@@ -2,8 +2,13 @@
 # Add excecuting permission to run
 # git update-index --chmod=+x hooks/command
 
+if [ -z "$DIR" ]
+then
+  DIR="$(pwd)/hooks"
+fi
+
 # shellcheck source=lib/shared.bash
-. "/plugin/lib/shared.bash"
+. "$DIR/../lib/shared.bash"
 
 TOKEN_ENV_NAME="$(plugin_read_config SLACK_TOKEN_ENV_NAME "SLACK_TOKEN")"
 
