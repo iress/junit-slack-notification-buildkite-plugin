@@ -50,14 +50,12 @@ if [[ -n "$(plugin_read_list TEST_SUITES_0_ARTIFACTS)" ]] ; then
   i=0
   while true; do
     var="TEST_SUITES_${i}_ARTIFACTS"
-    echo "$var=$(plugin_read_list $var)"
     if [[ -n "$(plugin_read_list $var)" ]] ; then
       buildkite-agent artifact download \
           "$(plugin_read_config "${var}" "")" \
           "$ARTIFACTS_DIR"
       i=$((i+1))
     else
-      echo "!!! LEAVING on $var"
       break
     fi
   done

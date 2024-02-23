@@ -681,6 +681,7 @@ describe("Add Statistic to Commit", () => {
             git_comment: "bk_MESSAGE",
             git_log: "asdfff012",
             git_username: "bk_BUILD_AUTHOR",
+            name: "",
             tests_failed: 0,
             tests_passed: 0,
             tests_ignored: 0
@@ -948,6 +949,7 @@ describe("Add Statistic to Commit", () => {
             git_comment: "bk_MESSAGE",
             git_log: "asdfff012",
             git_username: "bk_BUILD_AUTHOR",
+            name: "",
             tests_failed: 1,
             tests_ignored: 11,
             tests_passed: 1

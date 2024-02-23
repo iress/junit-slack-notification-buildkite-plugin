@@ -5,6 +5,7 @@ import {addStatsToCommit} from "./testcaseStats";
 
 export const run = async () => {
     const commit: JunitResult = {
+        name: "",
         build_id: parseInt(process.env.BUILDKITE_BUILD_NUMBER, 10),
         build_url: process.env.BUILDKITE_BUILD_URL,
         buildkite_pipeline: process.env.BUILDKITE_PIPELINE_NAME,
@@ -20,8 +21,27 @@ export const run = async () => {
     const SLACK_TOKEN = process.env.SLACK_TOKEN;
     const SLACK_CHANNEL = process.env.SLACK_CHANNEL;
 
-    const testsuites = await parseFiles();
-    const result = await addStatsToCommit(testsuites, commit);
-    await sendResultToSlack(SLACK_TOKEN, SLACK_CHANNEL, result)
+    const results:JunitResult[] = [];
+
+    const TEST_SUITES_0_ARTIFACTS = process.env.TEST_SUITES_0_ARTIFACTS || "";
+
+    if (TEST_SUITES_0_ARTIFACTS !== "") {
+        // loop until the string TEST_SUITES_0_ARTIFACTS is empty and 0 increase over each loop
+        let i = 0;
+        while (process.env[`TEST_SUITES_${i}_ARTIFACTS`] !== "") {
+            const testsuite = await parseFiles(process.env[`TEST_SUITES_${i}_ARTIFACTS`]);
+            const result = await addStatsToCommit(testsuite, commit);
+            result.name = process.env[`TEST_SUITES_${i}_NAME`] || "";
+            results.push(result);
+            i++;
+        }
+    } else {
+        const ARTIFACTS = process.env.ARTIFACTS || "**/*.xml";
+        const testsuite = await parseFiles(ARTIFACTS);
+        const result = await addStatsToCommit(testsuite, commit);
+        results.push(result);
+    }
+
+    await sendResultToSlack(SLACK_TOKEN, SLACK_CHANNEL, results)
         .then(() => console.log("completed."));
 };

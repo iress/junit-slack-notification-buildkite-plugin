@@ -1,4 +1,5 @@
 export interface JunitResult {
+    name: string | undefined,
     buildkite_pipeline: string,
     git_branch_name: string,
     build_id: number,

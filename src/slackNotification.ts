@@ -1,23 +1,24 @@
 import {JunitResult} from "./interfaces/junitResult.interface";
 import {sendSlackMessage} from "./slack-web-api";
+import {flatten} from "lodash";
 
-export const getColor = (result: JunitResult): string => {
-    if (result.tests_failed > 0) {
+export const getColor = (results: JunitResult[]): string => {
+    if (results.some(result => result.tests_failed > 0)) {
         return "#B94A48";
     }
-    const summary = getSummary(result);
-    if (summary.length === 0) {
+    const summaries = results.map(result  => getSummary(result));
+    if (flatten(summaries).length === 0) {
         return "#B94A48";
     }
     return "#69A76A";
 };
 
-export const getEmoji = (result: JunitResult): string => {
-    if (result.tests_failed > 0) {
+export const getEmoji = (results: JunitResult[]): string => {
+    if (results.some(result => result.tests_failed > 0)) {
         return ":-1: :-1:";
     }
-    const summary = getSummary(result);
-    if (summary.length === 0) {
+    const summaries = results.map(result  => getSummary(result));
+    if (flatten(summaries).length === 0) {
         return ":-1:";
     }
     return ":+1:";
@@ -39,26 +40,39 @@ export const getSummary = (result: JunitResult): string[] => {
 
 export const getTextSummaryLine = (result: JunitResult): string => {
     const summary = getSummary(result);
-    if (summary.length > 0) {
-        return `Tests ${summary.join(", ")}`;
+    const name = !result.name? "" : `*${result.name}*: `;
+    if (summary.length > 0 && result.name) {
+        return `${name}Tests ${summary.join(", ")}`;
+    } else if (summary.length > 0 && !result.name) {
+        return `*Tests ${summary.join(", ")}*`;
     }
-    return "No tests data generated!";
+    return `${name}*No tests data generated!*`;
 };
 
-export const getCommitText = (result: JunitResult): string => {
-    return `${getEmoji(result)} *${result.buildkite_pipeline} (${result.git_branch_name}) #${result.build_id}*\n${result.git_comment} - ${result.git_username} (${result.git_log})`;
+export const getCommitText = (results: JunitResult[]): string => {
+    return `${getEmoji(results)} *${results[0].buildkite_pipeline} (${results[0].git_branch_name}) #${results[0].build_id}*\n${results[0].git_comment} - ${results[0].git_username} (${results[0].git_log})`;
 };
 
-export const getSlackMessageAttachments = (result: JunitResult): unknown  => {
+export const getSlackMessageAttachments = (results: JunitResult[]): unknown  => {
+    const details = results.map((result) => {
+        return {
+            "type": "section",
+            "text": {
+                "text": `${getTextSummaryLine(result)}`,
+                "type": "mrkdwn"
+            }
+        };
+    });
+
     return [
         {
-            "color": getColor(result),
+            "color": getColor(results),
             "blocks": [
                 {
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": getCommitText(result)
+                        "text": getCommitText(results)
                     },
                     "accessory": {
                         "type": "button",
@@ -66,22 +80,16 @@ export const getSlackMessageAttachments = (result: JunitResult): unknown  => {
                             "type": "plain_text",
                             "text": "View build"
                         },
-                        "url": result.build_url
+                        "url": results[0].build_url
                     }
                 },
-                {
-                    "type": "section",
-                    "text": {
-                        "text": `*${getTextSummaryLine(result)}*`,
-                        "type": "mrkdwn"
-                    }
-                }
+                ...details
             ]
         }
     ];
 };
 
-export const sendResultToSlack = async (slackToken: string, channel: string, junitResult: JunitResult): Promise<unknown> => {
+export const sendResultToSlack = async (slackToken: string, channel: string, junitResult: JunitResult[]): Promise<unknown> => {
     let goodToken = "";
     for (let i = 0; i < slackToken.length; i++) {
         if (checkChar(slackToken[i])) {
