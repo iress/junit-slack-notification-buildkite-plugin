@@ -103,3 +103,9 @@ load "${BATS_PLUGIN_PATH}/load.bash"
   assert_output --partial "Missing \$SLACK_TOKEN_ENV_NAME environment variable... looking for alternative"
   assert_output --partial "Missing Slack token: either use \$SLACK_TOKEN or \$SLACK_TOKEN_ENV_NAME to set environment variable"
 }
+
+# TODO: Write test for test suites
+# BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_TEST_SUITES_0_ARTIFACT=src/packages/*/test-report.xml
+# BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_TEST_SUITES_0_NAME=Unit tests
+# BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_TEST_SUITES_1_ARTIFACT=src/playwright/results/*-results.xml
+# BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_TEST_SUITES_1_NAME=Verification tests

@@ -9,12 +9,12 @@ fi
 # shellcheck source=lib/shared.bash
 . "$DIR/../lib/shared.bash"
 
-# TMP: display all variables starting with BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_
-for var in $(compgen -v | grep -E '^BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_'); do
-  if [[ $var != *"TOKEN"* ]]; then
-    echo "$var=${!var}"
-  fi
-done
+## TMP: display all variables starting with BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_
+#for var in $(compgen -v | grep -E '^BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_'); do
+#  if [[ $var != *"TOKEN"* ]]; then
+#    echo "$var=${!var}"
+#  fi
+#done
 
 TOKEN_ENV_NAME="$(plugin_read_config SLACK_TOKEN_ENV_NAME "SLACK_TOKEN")"
 
@@ -45,10 +45,19 @@ trap cleanup EXIT
 
 cd "$PLUGIN_DIR"
 
-# Dispatch to the command file
-if [[ -n "$(plugin_read_list TEST_SUITES)" ]] ; then
+if [[ -n "$(plugin_read_list TEST_SUITES_0_ARTIFACTS)" ]] ; then
   echo "--- :junit: Download each junits XML from the Test suites"
-  # TODO: download each artifacts in the test_suites list
+  i=0
+  while true; do
+    var="TEST_SUITES_${i}_ARTIFACTS"
+    if [[ -n "$(plugin_read_list $var)" ]] ; then
+      break
+    fi
+    buildkite-agent artifact download \
+        "$(plugin_read_config "${!var}" "**\*.xml")" \
+        "$ARTIFACTS_DIR"
+    i=$((i+1))
+  done
 else
   echo "--- :junit: Download the junits XML"
   # Allows files download to fail (FATAL  Failed to download artifacts: No artifacts found for downloading)
