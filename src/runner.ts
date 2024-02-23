@@ -4,6 +4,13 @@ import {parseFiles} from "./xmlParser";
 import {addStatsToCommit} from "./testcaseStats";
 
 export const run = async () => {
+    console.log("--- List all environment variables");
+    for (const property in process.env) {
+        if (!property.toLowerCase().includes("token")){
+            console.log(`${property}: ${process.env[property]}`);
+        }
+    }
+    console.log("--- Run");
     const commit: JunitResult = {
         name: "",
         build_id: parseInt(process.env.BUILDKITE_BUILD_NUMBER, 10),
@@ -24,6 +31,7 @@ export const run = async () => {
     const results:JunitResult[] = [];
 
     const TEST_SUITES_0_ARTIFACTS = process.env.TEST_SUITES_0_ARTIFACTS || "";
+
 
     if (TEST_SUITES_0_ARTIFACTS !== "") {
         let i = 0;
