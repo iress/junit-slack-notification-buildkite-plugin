@@ -2,12 +2,19 @@
 # Add excecuting permission to run
 # git update-index --chmod=+x hooks/command
 
-if [ -z "$DIR" ] && [ "$CI" != "true" ]; then
-  DIR="$(pwd)/hooks"
+if [ -z "$DIR" ]; then
+  DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 fi
 
 # shellcheck source=lib/shared.bash
 . "$DIR/../lib/shared.bash"
+
+# TMP: display all variables starting with BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_
+for var in $(compgen -v | grep -E '^BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_'); do
+  if [[ $var != *"TOKEN"* ]]; then
+    echo "$var=${!var}"
+  fi
+done
 
 TOKEN_ENV_NAME="$(plugin_read_config SLACK_TOKEN_ENV_NAME "SLACK_TOKEN")"
 
