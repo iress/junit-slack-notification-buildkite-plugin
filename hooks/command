@@ -2,8 +2,7 @@
 # Add excecuting permission to run
 # git update-index --chmod=+x hooks/command
 
-if [ -z "$DIR" ]
-then
+if [ -z "$DIR" ] && [ "$CI" != "true" ]; then
   DIR="$(pwd)/hooks"
 fi
 
