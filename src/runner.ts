@@ -32,13 +32,14 @@ export const run = async () => {
 
     if (process.env.TEST_SUITES_0_ARTIFACTS || "" !== "") {
         let i = 0;
-        while ((process.env[`TEST_SUITES_${i}_ARTIFACTS`] || "") !== "") {
+        while ((process.env[`TEST_SUITES_${i}_ARTIFACTS`] || "") !== ""  && i < 6) {
             console.log(`Checking ${process.env[`TEST_SUITES_${i}_NAME`] || process.env[`TEST_SUITES_${i}_ARTIFACTS`]}`);
             const testsuite = await parseFiles(process.env[`TEST_SUITES_${i}_ARTIFACTS`]);
             const partialResult = await addStatsToCommit(testsuite, commit);
+            const name = process.env[`TEST_SUITES_${i}_NAME`] || "";
             const result = {
-                name: process.env[`TEST_SUITES_${i}_NAME`] || "",
-                ...partialResult
+                ...partialResult,
+                name
             };
             results.push(result);
             i++;

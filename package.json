@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@slack/web-api": "^6.9.1",
+    "@types/minimatch": "^5.1.2",
     "async": "^3.2.5",
     "fs": "0.0.1-security",
     "lodash": ">=4.17.21",
