@@ -26,12 +26,15 @@ export const run = async () => {
     const TEST_SUITES_0_ARTIFACTS = process.env.TEST_SUITES_0_ARTIFACTS || "";
 
     if (TEST_SUITES_0_ARTIFACTS !== "") {
-        // loop until the string TEST_SUITES_0_ARTIFACTS is empty and 0 increase over each loop
         let i = 0;
-        while (process.env[`TEST_SUITES_${i}_ARTIFACTS`] !== "") {
+        while ((process.env[`TEST_SUITES_${i}_ARTIFACTS`] || "") !== "") {
+            console.log(`Checking ${process.env[`TEST_SUITES_${i}_NAME`] || process.env[`TEST_SUITES_${i}_ARTIFACTS`]}`);
             const testsuite = await parseFiles(process.env[`TEST_SUITES_${i}_ARTIFACTS`]);
-            const result = await addStatsToCommit(testsuite, commit);
-            result.name = process.env[`TEST_SUITES_${i}_NAME`] || "";
+            const partialResult = await addStatsToCommit(testsuite, commit);
+            const result = {
+                name: process.env[`TEST_SUITES_${i}_NAME`] || "",
+                ...partialResult
+            };
             results.push(result);
             i++;
         }
