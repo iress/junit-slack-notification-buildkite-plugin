@@ -50,12 +50,11 @@ steps:
 
 ## Configuration
 
-### `artifacts` (Required if no `test_suites`, string)
+### `artifacts` (Use if no `test_suites`, string, default `**/*.xml` )
 
-The file pattern to use to retrieve JUnit XML reports 
-e.g. **/*.xml
+The file pattern to use to retrieve JUnit XML reports
 
-### `test_suites` (Required if no `artifacts`, object)
+### `test_suites` (object)
 
 The object containing the JUnit XML reports. The object should be in the following format:
 

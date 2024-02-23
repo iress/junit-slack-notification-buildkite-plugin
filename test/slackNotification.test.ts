@@ -23,8 +23,6 @@ beforeEach(() => {
 
 describe("Failed test", () => {
     const result: JunitResult = {
-        name: "",
-        tests_failed: 3,
         build_id: 123,
         build_url: "https://www.iress.com/mybuild",
         buildkite_pipeline: "My Build pipeline",
@@ -32,26 +30,31 @@ describe("Failed test", () => {
         git_comment: "Initial commit",
         git_log: "a1b2c3",
         git_username: "F T",
-        tests_passed: 1,
-        tests_ignored: 2
+        suite: [
+            {
+                tests_failed: 3,
+                tests_passed: 1,
+                tests_ignored: 2
+            }
+        ]
     };
 
     it("should return red", () => {
-        const actual = getColor([result]);
+        const actual = getColor(result);
 
         expect(actual).toBe("#B94A48");
 
     });
 
     it("should return negative emoij", () => {
-        const actual = getEmoji([result]);
+        const actual = getEmoji(result);
 
         expect(actual).toBe(":-1: :-1:");
 
     });
 
     it("should return summary slack message", () => {
-        const actual = getSlackMessageAttachments([result]);
+        const actual = getSlackMessageAttachments(result);
 
         expect(actual).toStrictEqual([
             {
@@ -89,7 +92,7 @@ describe("Failed test", () => {
         const SLACK_TOKEN = "xoxb-00000000000-0000000000000-xxxxxxxxxxxxxxxxxxxxxxxx\t";
         const SLACK_CHANNEL = "hac-483_testing";
 
-        await sendResultToSlack(SLACK_TOKEN, SLACK_CHANNEL, [result]);
+        await sendResultToSlack(SLACK_TOKEN, SLACK_CHANNEL, result);
 
         expect(mockToken).toEqual("xoxb-00000000000-0000000000000-xxxxxxxxxxxxxxxxxxxxxxxx");
 
@@ -99,8 +102,6 @@ describe("Failed test", () => {
 
 describe("Passed test", () => {
     const result: JunitResult = {
-        name: "",
-        tests_failed: 0,
         build_id: 456,
         build_url: "https://www.iress.com/myotherbuild",
         buildkite_pipeline: "My Build other pipeline",
@@ -108,13 +109,16 @@ describe("Passed test", () => {
         git_comment: "Second commit",
         git_log: "a1b2c3d4",
         git_username: "Frankly Chilled",
-        tests_passed: 1,
-        tests_ignored: 0
+        suite: [
+            {
+                tests_failed: 0,
+                tests_passed: 1,
+                tests_ignored: 0
+            }
+        ]
     };
 
-    const unitTestResult: JunitResult = {
-        name: "Unit tests",
-        tests_failed: 0,
+    const testSuiteResult: JunitResult = {
         build_id: 456,
         build_url: "https://www.iress.com/myotherbuild",
         buildkite_pipeline: "My Build other pipeline",
@@ -122,34 +126,32 @@ describe("Passed test", () => {
         git_comment: "Second commit",
         git_log: "a1b2c3d4",
         git_username: "Frankly Chilled",
-        tests_passed: 300,
-        tests_ignored: 0
+        suite: [
+            {
+                name: "Unit tests",
+                tests_failed: 0,
+                tests_passed: 300,
+                tests_ignored: 0
+            },{
+                name: "Verification tests",
+                tests_failed: 0,
+                tests_passed: 20,
+                tests_ignored: 0
+            }
+        ],
     };
 
-    const verificationTestResult: JunitResult = {
-        name: "Verification tests",
-        tests_failed: 0,
-        build_id: 456,
-        build_url: "https://www.iress.com/myotherbuild",
-        buildkite_pipeline: "My Build other pipeline",
-        git_branch_name: "hac-483_other_branch",
-        git_comment: "Second commit",
-        git_log: "a1b2c3d4",
-        git_username: "Frankly Chilled",
-        tests_passed: 20,
-        tests_ignored: 0
-    };
 
     it("should return green", () => {
 
-        const actual = getColor([result]);
+        const actual = getColor(result);
 
         expect(actual).toBe("#69A76A");
 
     });
 
     it("should return summary slack message", () => {
-        const actual = getSlackMessageAttachments([result]);
+        const actual = getSlackMessageAttachments(result);
 
         expect(actual).toStrictEqual([
             {
@@ -184,7 +186,7 @@ describe("Passed test", () => {
     });
 
     it("should return summary slack message of multiple test suites", () => {
-        const actual = getSlackMessageAttachments([unitTestResult, verificationTestResult]);
+        const actual = getSlackMessageAttachments(testSuiteResult);
 
         expect(actual).toStrictEqual([
             {
@@ -229,14 +231,12 @@ describe("Passed test", () => {
         const SLACK_TOKEN = "xoxb-00000000000-0000000000000-xxxxxxxxxxxxxxxxxxxxxxxx";
         const SLACK_CHANNEL = "hac-483_testing";
 
-        await sendResultToSlack(SLACK_TOKEN, SLACK_CHANNEL, [result]);
+        await sendResultToSlack(SLACK_TOKEN, SLACK_CHANNEL, result);
     });
 });
 
 describe("No tests", () => {
     const result: JunitResult = {
-        name: "",
-        tests_failed: 0,
         build_id: 789,
         build_url: "https://www.iress.com/myotherbuild",
         buildkite_pipeline: "My Build other pipeline",
@@ -244,12 +244,17 @@ describe("No tests", () => {
         git_comment: "Second commit",
         git_log: "a1b2c3d4",
         git_username: "Frankly Chilled",
-        tests_passed: 0,
-        tests_ignored: 0
+        suite: [
+            {
+                tests_failed: 0,
+                tests_passed: 0,
+                tests_ignored: 0
+            }
+        ]
     };
 
     it("should return summary slack message", () => {
-        const actual = getSlackMessageAttachments([result]);
+        const actual = getSlackMessageAttachments(result);
 
         expect(actual).toStrictEqual([
             {
@@ -287,7 +292,7 @@ describe("No tests", () => {
         const SLACK_TOKEN = "xoxb-00000000000-0000000000000-xxxxxxxxxxxxxxxxxxxxxxxx";
         const SLACK_CHANNEL = "hac-483_testing";
 
-        await sendResultToSlack(SLACK_TOKEN, SLACK_CHANNEL, [result]);
+        await sendResultToSlack(SLACK_TOKEN, SLACK_CHANNEL, result);
 
         // verify call to chat
         const attachments = [

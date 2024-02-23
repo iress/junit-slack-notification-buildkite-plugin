@@ -9,13 +9,6 @@ fi
 # shellcheck source=lib/shared.bash
 . "$DIR/../lib/shared.bash"
 
-## TMP: display all variables starting with BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_
-#for var in $(compgen -v | grep -E '^BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_'); do
-#  if [[ $var != *"TOKEN"* ]]; then
-#    echo "$var=${!var}"
-#  fi
-#done
-
 TOKEN_ENV_NAME="$(plugin_read_config SLACK_TOKEN_ENV_NAME "SLACK_TOKEN")"
 
 TOKEN_VALUE=$(eval "echo \${$TOKEN_ENV_NAME:-}")
@@ -32,7 +25,6 @@ if [[ -z "${TOKEN_VALUE}" ]]; then
 fi
 
 PLUGIN_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)/.."
-
 
 ARTIFACTS_DIR="$(pwd)/$(mktemp -d "junits-slack-notification-plugin-artifacts-tmp.XXXXXXXXXX")"
 export ARTIFACTS_DIR

@@ -26,11 +26,6 @@ configuration:
       type: string
     SLACK_TOKEN_ENV_NAME:
       type: string
-  anyOf:
-    - required:
-        - artifacts
-        - SLACK_CHANNEL
-    - required:
-        - test_suites
-        - SLACK_CHANNEL
+  required:
+    - SLACK_CHANNEL
   additionalProperties: false

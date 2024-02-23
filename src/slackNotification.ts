@@ -1,30 +1,31 @@
 import {JunitResult} from "./interfaces/junitResult.interface";
 import {sendSlackMessage} from "./slack-web-api";
 import {flatten} from "lodash";
+import {JunitSuiteResult} from "./interfaces/junitSuiteResult.interface";
 
-export const getColor = (results: JunitResult[]): string => {
-    if (results.some(result => result.tests_failed > 0)) {
+export const getColor = (results: JunitResult): string => {
+    if (results.suite.some(result => result.tests_failed > 0)) {
         return "#B94A48";
     }
-    const summaries = results.map(result  => getSummary(result));
+    const summaries = results.suite.map(result  => getSummary(result));
     if (flatten(summaries).length === 0) {
         return "#B94A48";
     }
     return "#69A76A";
 };
 
-export const getEmoji = (results: JunitResult[]): string => {
-    if (results.some(result => result.tests_failed > 0)) {
+export const getEmoji = (results: JunitResult): string => {
+    if (results.suite.some(result => result.tests_failed > 0)) {
         return ":-1: :-1:";
     }
-    const summaries = results.map(result  => getSummary(result));
+    const summaries = results.suite.map(result  => getSummary(result));
     if (flatten(summaries).length === 0) {
         return ":-1:";
     }
     return ":+1:";
 };
 
-export const getSummary = (result: JunitResult): string[] => {
+export const getSummary = (result: JunitSuiteResult): string[] => {
     const summary = [];
     if (result.tests_failed > 0) {
         summary.push(`failed: ${result.tests_failed}`);
@@ -38,7 +39,7 @@ export const getSummary = (result: JunitResult): string[] => {
     return summary;
 };
 
-export const getTextSummaryLine = (result: JunitResult): string => {
+export const getTextSummaryLine = (result: JunitSuiteResult): string => {
     const summary = getSummary(result);
     const name = !result.name? "" : `*${result.name}*: `;
     if (summary.length > 0 && result.name) {
@@ -49,12 +50,12 @@ export const getTextSummaryLine = (result: JunitResult): string => {
     return `${name}*No tests data generated!*`;
 };
 
-export const getCommitText = (results: JunitResult[]): string => {
-    return `${getEmoji(results)} *${results[0].buildkite_pipeline} (${results[0].git_branch_name}) #${results[0].build_id}*\n${results[0].git_comment} - ${results[0].git_username} (${results[0].git_log})`;
+export const getCommitText = (results: JunitResult): string => {
+    return `${getEmoji(results)} *${results.buildkite_pipeline} (${results.git_branch_name}) #${results.build_id}*\n${results.git_comment} - ${results.git_username} (${results.git_log})`;
 };
 
-export const getSlackMessageAttachments = (results: JunitResult[]): unknown  => {
-    const details = results.map((result) => {
+export const getSlackMessageAttachments = (results: JunitResult): unknown  => {
+    const details = results.suite.map((result) => {
         return {
             "type": "section",
             "text": {
@@ -80,7 +81,7 @@ export const getSlackMessageAttachments = (results: JunitResult[]): unknown  => 
                             "type": "plain_text",
                             "text": "View build"
                         },
-                        "url": results[0].build_url
+                        "url": results.build_url
                     }
                 },
                 ...details
@@ -89,7 +90,7 @@ export const getSlackMessageAttachments = (results: JunitResult[]): unknown  => 
     ];
 };
 
-export const sendResultToSlack = async (slackToken: string, channel: string, junitResult: JunitResult[]): Promise<unknown> => {
+export const sendResultToSlack = async (slackToken: string, channel: string, junitResult: JunitResult): Promise<unknown> => {
     let goodToken = "";
     for (let i = 0; i < slackToken.length; i++) {
         if (checkChar(slackToken[i])) {

@@ -22,9 +22,9 @@ jest.mock("../src/xmlParser", () => ({
     parseFiles: parseFilesMock
 }));
 //
-const addStatsToCommitMock = jest.fn().mockResolvedValue({});
+const getStatsMock = jest.fn().mockResolvedValue({});
 jest.mock("../src/testcaseStats", () => ({
-    addStatsToCommit: addStatsToCommitMock
+    getStats: getStatsMock
 }));
 
 import {run} from "../src/runner";
@@ -58,19 +58,7 @@ line 3`,
         });
         await run();
         expect(parseFilesMock).toHaveBeenCalled();
-        expect(addStatsToCommitMock).toHaveBeenCalledWith([], {
-            "build_id": 123,
-            "build_url": "http://bk/b",
-            "buildkite_pipeline": "pipeline name",
-            "git_branch_name": "branch-name",
-            "git_comment": "line 1",
-            "git_log": "0123456",
-            "git_username": "the-author",
-            "name": "",
-            "tests_failed": 0,
-            "tests_ignored": 0,
-            "tests_passed": 0
-        });
+        expect(getStatsMock).toHaveBeenCalledWith([]);
         expect(sendResultToSlackMock).toHaveBeenCalled();
 
     });
@@ -78,19 +66,7 @@ line 3`,
     it("should parse, add stats and send to slack ", async () => {
         await run();
         expect(parseFilesMock).toHaveBeenCalled();
-        expect(addStatsToCommitMock).toHaveBeenCalledWith([], {
-            "build_id": 123,
-            "build_url": "http://bk/b",
-            "buildkite_pipeline": "pipeline name",
-            "git_branch_name": "branch-name",
-            "git_comment": "msg",
-            "git_log": "0123456",
-            "git_username": "the-author",
-            "name": "",
-            "tests_failed": 0,
-            "tests_ignored": 0,
-            "tests_passed": 0
-        });
+        expect(getStatsMock).toHaveBeenCalledWith([]);
         expect(sendResultToSlackMock).toHaveBeenCalled();
 
     });
@@ -129,8 +105,9 @@ line 3`,
         expect(parseFilesMock).toHaveBeenCalledTimes(2);
         expect(parseFilesMock).toHaveBeenCalledWith("src/packages/*/test-report.xml");
         expect(parseFilesMock).toHaveBeenCalledWith("src/playwright/results/*-results.xml");
-        expect(addStatsToCommitMock).toHaveBeenCalledTimes(2);
-        expect(addStatsToCommitMock).toHaveBeenCalledWith([], {
+        expect(getStatsMock).toHaveBeenCalledTimes(2);
+        expect(getStatsMock).toHaveBeenCalledWith([]);
+        expect(sendResultToSlackMock).toHaveBeenCalledWith("slack-token", "slack-channel", {
             "build_id": 123,
             "build_url": "http://bk/b",
             "buildkite_pipeline": "pipeline name",
@@ -138,12 +115,8 @@ line 3`,
             "git_comment": "line 1",
             "git_log": "0123456",
             "git_username": "the-author",
-            "name": "",
-            "tests_failed": 0,
-            "tests_ignored": 0,
-            "tests_passed": 0
+            "suite": [{"name": "Unit tests"}, {"name": "Verification tests"}]
         });
-        expect(sendResultToSlackMock).toHaveBeenCalledWith("slack-token", "slack-channel", [{"name": "Unit tests"}, {"name": "Verification tests"}]);
 
     });
 });
