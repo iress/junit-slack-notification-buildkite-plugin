@@ -50,7 +50,7 @@ if [[ -n "$(plugin_read_list TEST_SUITES_0_ARTIFACTS)" ]] ; then
   i=0
   while true; do
     var="TEST_SUITES_${i}_ARTIFACTS"
-    if [[ -n "$(plugin_read_list $var)" ]] ; then
+    if [[ -n "$(!plugin_read_list $var)" ]] ; then
       break
     fi
     buildkite-agent artifact download \
