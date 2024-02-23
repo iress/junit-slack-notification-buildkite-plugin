@@ -2,12 +2,20 @@
 # Add excecuting permission to run
 # git update-index --chmod=+x hooks/command
 
-TOKEN_ENV_NAME="${BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_TOKEN_ENV_NAME:-SLACK_TOKEN}"
+if [ -z "$DIR" ]; then
+  DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+fi
+
+# shellcheck source=lib/shared.bash
+. "$DIR/../lib/shared.bash"
+
+TOKEN_ENV_NAME="$(plugin_read_config SLACK_TOKEN_ENV_NAME "SLACK_TOKEN")"
+
 TOKEN_VALUE=$(eval "echo \${$TOKEN_ENV_NAME:-}")
 
 if [[ -z "${TOKEN_VALUE}" ]]; then
   echo "Missing \$SLACK_TOKEN_ENV_NAME environment variable... looking for alternative"
-  TOKEN_VALUE="${BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_TOKEN}"
+  TOKEN_VALUE="$(plugin_read_config SLACK_TOKEN "")"
 fi
 
 export TOKEN_VALUE
@@ -17,8 +25,6 @@ if [[ -z "${TOKEN_VALUE}" ]]; then
 fi
 
 PLUGIN_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)/.."
-
-echo "--- :junit: Download the junits XML"
 
 ARTIFACTS_DIR="$(pwd)/$(mktemp -d "junits-slack-notification-plugin-artifacts-tmp.XXXXXXXXXX")"
 export ARTIFACTS_DIR
@@ -31,13 +37,30 @@ trap cleanup EXIT
 
 cd "$PLUGIN_DIR"
 
-# Allows files download to fail (FATAL  Failed to download artifacts: No artifacts found for downloading)
-# and send "No tests data generated!" message to slack in this scenario
-buildkite-agent artifact download \
-  "${BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_ARTIFACTS}" \
-  "$ARTIFACTS_DIR"
+if [[ -n "$(plugin_read_list TEST_SUITES_0_ARTIFACTS)" ]] ; then
+  echo "--- :junit: Download each junits XML from the Test suites"
+  i=0
+  while true; do
+    var="TEST_SUITES_${i}_ARTIFACTS"
+    if [[ -n "$(plugin_read_list $var)" ]] ; then
+      buildkite-agent artifact download \
+          "$(plugin_read_config "${var}" "")" \
+          "$ARTIFACTS_DIR"
+      i=$((i+1))
+    else
+      break
+    fi
+  done
+else
+  echo "--- :junit: Download the junits XML"
+  # Allows files download to fail (FATAL  Failed to download artifacts: No artifacts found for downloading)
+  # and send "No tests data generated!" message to slack in this scenario
+  buildkite-agent artifact download \
+    "$(plugin_read_config ARTIFACTS "**/*.xml")" \
+    "$ARTIFACTS_DIR"
+fi
 
 set -euo pipefail
 
-echo "--- Send message to ${BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_CHANNEL}"
+echo "--- Send message to $(plugin_read_config SLACK_CHANNEL "???")"
 make run

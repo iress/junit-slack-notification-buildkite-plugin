@@ -23,7 +23,6 @@ beforeEach(() => {
 
 describe("Failed test", () => {
     const result: JunitResult = {
-        tests_failed: 3,
         build_id: 123,
         build_url: "https://www.iress.com/mybuild",
         buildkite_pipeline: "My Build pipeline",
@@ -31,8 +30,13 @@ describe("Failed test", () => {
         git_comment: "Initial commit",
         git_log: "a1b2c3",
         git_username: "F T",
-        tests_passed: 1,
-        tests_ignored: 2
+        suite: [
+            {
+                tests_failed: 3,
+                tests_passed: 1,
+                tests_ignored: 2
+            }
+        ]
     };
 
     it("should return red", () => {
@@ -98,7 +102,6 @@ describe("Failed test", () => {
 
 describe("Passed test", () => {
     const result: JunitResult = {
-        tests_failed: 0,
         build_id: 456,
         build_url: "https://www.iress.com/myotherbuild",
         buildkite_pipeline: "My Build other pipeline",
@@ -106,9 +109,38 @@ describe("Passed test", () => {
         git_comment: "Second commit",
         git_log: "a1b2c3d4",
         git_username: "Frankly Chilled",
-        tests_passed: 1,
-        tests_ignored: 0
+        suite: [
+            {
+                tests_failed: 0,
+                tests_passed: 1,
+                tests_ignored: 0
+            }
+        ]
     };
+
+    const testSuiteResult: JunitResult = {
+        build_id: 456,
+        build_url: "https://www.iress.com/myotherbuild",
+        buildkite_pipeline: "My Build other pipeline",
+        git_branch_name: "hac-483_other_branch",
+        git_comment: "Second commit",
+        git_log: "a1b2c3d4",
+        git_username: "Frankly Chilled",
+        suite: [
+            {
+                name: "Unit tests",
+                tests_failed: 0,
+                tests_passed: 300,
+                tests_ignored: 0
+            },{
+                name: "Verification tests",
+                tests_failed: 0,
+                tests_passed: 20,
+                tests_ignored: 0
+            }
+        ],
+    };
+
 
     it("should return green", () => {
 
@@ -153,19 +185,58 @@ describe("Passed test", () => {
 
     });
 
+    it("should return summary slack message of multiple test suites", () => {
+        const actual = getSlackMessageAttachments(testSuiteResult);
+
+        expect(actual).toStrictEqual([
+            {
+                "blocks": [
+                    {
+                        "accessory": {
+                            "text": {
+                                "text": "View build",
+                                "type": "plain_text"
+                            },
+                            "type": "button",
+                            "url": "https://www.iress.com/myotherbuild"
+                        },
+                        "text": {
+                            "text": ":+1: *My Build other pipeline (hac-483_other_branch) #456*\nSecond commit - Frankly Chilled (a1b2c3d4)",
+                            "type": "mrkdwn"
+                        },
+                        "type": "section"
+                    },
+                    {
+                        "text": {
+                            "text": "*Unit tests*: Tests passed: 300",
+                            "type": "mrkdwn"
+                        },
+                        "type": "section"
+                    },
+                    {
+                        "text": {
+                            "text": "*Verification tests*: Tests passed: 20",
+                            "type": "mrkdwn"
+                        },
+                        "type": "section"
+                    }
+                ],
+                "color": "#69A76A"
+            }
+        ]);
+
+    });
+
     it("send message to slack channel", async () => {
         const SLACK_TOKEN = "xoxb-00000000000-0000000000000-xxxxxxxxxxxxxxxxxxxxxxxx";
         const SLACK_CHANNEL = "hac-483_testing";
 
         await sendResultToSlack(SLACK_TOKEN, SLACK_CHANNEL, result);
-
-
     });
 });
 
 describe("No tests", () => {
     const result: JunitResult = {
-        tests_failed: 0,
         build_id: 789,
         build_url: "https://www.iress.com/myotherbuild",
         buildkite_pipeline: "My Build other pipeline",
@@ -173,8 +244,13 @@ describe("No tests", () => {
         git_comment: "Second commit",
         git_log: "a1b2c3d4",
         git_username: "Frankly Chilled",
-        tests_passed: 0,
-        tests_ignored: 0
+        suite: [
+            {
+                tests_failed: 0,
+                tests_passed: 0,
+                tests_ignored: 0
+            }
+        ]
     };
 
     it("should return summary slack message", () => {

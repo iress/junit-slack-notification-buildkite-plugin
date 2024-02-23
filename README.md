@@ -19,18 +19,53 @@ steps:
     depends_on: my-test
     allow_dependency_failure: true
     plugins:
-      - iress/junit-slack-notification#v1.0.3:
+      - iress/junit-slack-notification#v1.0.4b:
           artifacts: "**/*.xml"
+          SLACK_TOKEN: "xoxb-xxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+          SLACK_CHANNEL: "#junit_bot_testing"
+```
+or
+```yml
+steps:
+  - label: Run unit tests
+    key: my-unit-test
+    command: ...
+  - label: Run Verification tests
+    key: my-verification-test
+    command: ...
+    
+  - label: ":slack: :memo: to #junit_bot_testing"
+    depends_on: my-test
+    allow_dependency_failure: true
+    plugins:
+      - iress/junit-slack-notification#v1.0.4b:
+          test_suites:
+              - name: "Unit tests"
+                artifacts: "unit-test/**/*.xml"
+              - name: "Verification tests"
+                artifacts: "verification-test/**/*.xml"
           SLACK_TOKEN: "xoxb-xxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
           SLACK_CHANNEL: "#junit_bot_testing"
 ```
 
 ## Configuration
 
-### `artifacts` (Required, string)
+### `artifacts` (Use if no `test_suites`, string, default `**/*.xml` )
 
-The file pattern to use to retrieve JUnit XML reports 
-e.g. **/*.xml
+The file pattern to use to retrieve JUnit XML reports
+
+### `test_suites` (object)
+
+The object containing the JUnit XML reports. The object should be in the following format:
+
+```yml
+test_suites:
+  - name: "Test Suite 1"
+    artifacts: "test-suite-1/**/*.xml"
+  - name: "Test Suite 2"
+    artifacts: "test-suite-1/**/*.xml"
+
+```
 
 ### `SLACK_CHANNEL` (Required, string)
 

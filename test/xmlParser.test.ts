@@ -3,7 +3,7 @@ import {describe, expect} from "@jest/globals";
 
 describe("Parser test read slack-notification/reports folder", () => {
   it("should parse XML files with testcase results", async () => {
-    const actual = await parseFiles();
+    const actual = await parseFiles("**/*.xml");
     expect(actual).toEqual([
       {
         "testsuite": {

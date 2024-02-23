@@ -42,3 +42,5 @@ dist/**/*
 yarn.lock
 
 /.cache_ggshield
+/reports/src/
+/test/runner.iff.test.ts

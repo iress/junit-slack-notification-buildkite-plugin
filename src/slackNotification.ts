@@ -1,29 +1,31 @@
 import {JunitResult} from "./interfaces/junitResult.interface";
 import {sendSlackMessage} from "./slack-web-api";
+import {flatten} from "lodash";
+import {JunitSuiteResult} from "./interfaces/junitSuiteResult.interface";
 
-export const getColor = (result: JunitResult): string => {
-    if (result.tests_failed > 0) {
+export const getColor = (results: JunitResult): string => {
+    if (results.suite.some(result => result.tests_failed > 0)) {
         return "#B94A48";
     }
-    const summary = getSummary(result);
-    if (summary.length === 0) {
+    const summaries = results.suite.map(result  => getSummary(result));
+    if (flatten(summaries).length === 0) {
         return "#B94A48";
     }
     return "#69A76A";
 };
 
-export const getEmoji = (result: JunitResult): string => {
-    if (result.tests_failed > 0) {
+export const getEmoji = (results: JunitResult): string => {
+    if (results.suite.some(result => result.tests_failed > 0)) {
         return ":-1: :-1:";
     }
-    const summary = getSummary(result);
-    if (summary.length === 0) {
+    const summaries = results.suite.map(result  => getSummary(result));
+    if (flatten(summaries).length === 0) {
         return ":-1:";
     }
     return ":+1:";
 };
 
-export const getSummary = (result: JunitResult): string[] => {
+export const getSummary = (result: JunitSuiteResult): string[] => {
     const summary = [];
     if (result.tests_failed > 0) {
         summary.push(`failed: ${result.tests_failed}`);
@@ -37,28 +39,41 @@ export const getSummary = (result: JunitResult): string[] => {
     return summary;
 };
 
-export const getTextSummaryLine = (result: JunitResult): string => {
+export const getTextSummaryLine = (result: JunitSuiteResult): string => {
     const summary = getSummary(result);
-    if (summary.length > 0) {
-        return `Tests ${summary.join(", ")}`;
+    const name = !result.name? "" : `*${result.name}*: `;
+    if (summary.length > 0 && result.name) {
+        return `${name}Tests ${summary.join(", ")}`;
+    } else if (summary.length > 0 && !result.name) {
+        return `*Tests ${summary.join(", ")}*`;
     }
-    return "No tests data generated!";
+    return `${name}*No tests data generated!*`;
 };
 
-export const getCommitText = (result: JunitResult): string => {
-    return `${getEmoji(result)} *${result.buildkite_pipeline} (${result.git_branch_name}) #${result.build_id}*\n${result.git_comment} - ${result.git_username} (${result.git_log})`;
+export const getCommitText = (results: JunitResult): string => {
+    return `${getEmoji(results)} *${results.buildkite_pipeline} (${results.git_branch_name}) #${results.build_id}*\n${results.git_comment} - ${results.git_username} (${results.git_log})`;
 };
 
-export const getSlackMessageAttachments = (result: JunitResult): unknown  => {
+export const getSlackMessageAttachments = (results: JunitResult): unknown  => {
+    const details = results.suite.map((result) => {
+        return {
+            "type": "section",
+            "text": {
+                "text": `${getTextSummaryLine(result)}`,
+                "type": "mrkdwn"
+            }
+        };
+    });
+
     return [
         {
-            "color": getColor(result),
+            "color": getColor(results),
             "blocks": [
                 {
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": getCommitText(result)
+                        "text": getCommitText(results)
                     },
                     "accessory": {
                         "type": "button",
@@ -66,16 +81,10 @@ export const getSlackMessageAttachments = (result: JunitResult): unknown  => {
                             "type": "plain_text",
                             "text": "View build"
                         },
-                        "url": result.build_url
+                        "url": results.build_url
                     }
                 },
-                {
-                    "type": "section",
-                    "text": {
-                        "text": `*${getTextSummaryLine(result)}*`,
-                        "type": "mrkdwn"
-                    }
-                }
+                ...details
             ]
         }
     ];

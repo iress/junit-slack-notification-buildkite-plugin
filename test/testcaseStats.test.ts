@@ -1,6 +1,5 @@
-import {addStatsToCommit, allStats, combineStats, stats} from "../src/testcaseStats";
+import {allStats, combineStats, getStats, stats} from "../src/testcaseStats";
 import {describe, expect, it} from "@jest/globals";
-import {JunitResult} from "../src/interfaces/junitResult.interface";
 
 describe("Convert test cases statistics", () => {
     it("should calculate passed test with testcase stats", async () => {
@@ -673,18 +672,6 @@ describe("Combine all statistics", () => {
 
 describe("Add Statistic to Commit", () => {
     it("should add all results together", async () => {
-        const commit: JunitResult = {
-            build_id: 1,
-            build_url: "http://bk/build/1",
-            buildkite_pipeline: "bk_PIPELINE_NAME",
-            git_branch_name: "bk_BRANCH",
-            git_comment: "bk_MESSAGE",
-            git_log: "asdfff012",
-            git_username: "bk_BUILD_AUTHOR",
-            tests_failed: 0,
-            tests_passed: 0,
-            tests_ignored: 0
-        };
         const testsuites = [
             {
                 "testsuites": {
@@ -938,16 +925,9 @@ describe("Add Statistic to Commit", () => {
             }
         ];
 
-        const actual = await addStatsToCommit(testsuites, commit);
+        const actual = await getStats(testsuites);
 
         expect(actual).toStrictEqual({
-            build_id: 1,
-            build_url: "http://bk/build/1",
-            buildkite_pipeline: "bk_PIPELINE_NAME",
-            git_branch_name: "bk_BRANCH",
-            git_comment: "bk_MESSAGE",
-            git_log: "asdfff012",
-            git_username: "bk_BUILD_AUTHOR",
             tests_failed: 1,
             tests_ignored: 11,
             tests_passed: 1

@@ -1,3 +1,5 @@
+import {JunitSuiteResult} from "./junitSuiteResult.interface";
+
 export interface JunitResult {
     buildkite_pipeline: string,
     git_branch_name: string,
@@ -5,8 +7,6 @@ export interface JunitResult {
     git_comment: string,
     git_username: string,
     git_log: string,
-    tests_failed: number,
-    tests_passed: number,
-    tests_ignored: number,
     build_url: string;
+    suite: JunitSuiteResult[];
 }

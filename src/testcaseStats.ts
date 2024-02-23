@@ -1,8 +1,8 @@
 import {TestCasesStats} from "./interfaces/testCasesStats.interface";
-import {JunitResult} from "./interfaces/junitResult.interface";
 import {sumBy} from "lodash";
+import {JunitSuiteResult} from "./interfaces/junitSuiteResult.interface";
 
-export const stats = (reportfile: any) => {
+export const stats = (reportfile: any): TestCasesStats => {
     const extractedTestSuite = (): any[] => {
         if (typeof reportfile["testsuites"] !== "undefined") {
             const testsuites: any = reportfile["testsuites"];
@@ -72,12 +72,12 @@ export const stats = (reportfile: any) => {
     }
 };
 
-export const allStats = (reportfiles: any[]) => {
+export const allStats = (reportfiles: any[]): TestCasesStats[] => {
     return reportfiles.map(stats);
 };
 
 
-export const combineStats = (all: TestCasesStats[]) => {
+export const combineStats = (all: TestCasesStats[]): TestCasesStats => {
     return {
         failed: sumBy(all, "failed"),
         ignored: sumBy(all, "ignored"),
@@ -85,11 +85,12 @@ export const combineStats = (all: TestCasesStats[]) => {
     };
 };
 
-export const addStatsToCommit = async (reportfiles: any[], commit: JunitResult): Promise<JunitResult> => {
+export const getStats = async (reportfiles: any[]): Promise<JunitSuiteResult> => {
     const ALL_STATS = allStats(reportfiles);
     const COMBINE_STATS = combineStats(ALL_STATS);
-    commit.tests_passed = COMBINE_STATS.passed;
-    commit.tests_ignored = COMBINE_STATS.ignored;
-    commit.tests_failed = COMBINE_STATS.failed;
-    return commit;
+    return {
+        tests_passed: COMBINE_STATS.passed,
+        tests_ignored: COMBINE_STATS.ignored,
+        tests_failed: COMBINE_STATS.failed,
+    };
 };
