@@ -3,7 +3,7 @@
 # git update-index --chmod=+x hooks/command
 
 # shellcheck source=lib/shared.bash
-. "$DIR/../lib/shared.bash"
+. "/plugin/lib/shared.bash"
 
 TOKEN_ENV_NAME="$(plugin_read_config SLACK_TOKEN_ENV_NAME "SLACK_TOKEN")"
 

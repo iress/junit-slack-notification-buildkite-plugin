@@ -25,7 +25,7 @@ load "${BATS_PLUGIN_PATH}/load.bash"
   
   assert_output --partial "Missing \$SLACK_TOKEN_ENV_NAME environment variable... looking for alternative"
   assert_output --partial "--- :junit: Download the junits XML"
-  assert_output --partial "Downloaded artifact to /plugin/junits-slack-notification-plugin-artifacts-tmp"
+  assert_output --partial "Downloaded artifact **\*.xml to /plugin/junits-slack-notification-plugin-artifacts-tmp"
   assert_output --partial "--- Send message to #junit_bot_testing"
   assert_output --partial "Run App using make"
 
@@ -52,7 +52,7 @@ load "${BATS_PLUGIN_PATH}/load.bash"
   assert_success
   
   assert_output --partial "--- :junit: Download the junits XML"
-  assert_output --partial "Downloaded artifact to /plugin/junits-slack-notification-plugin-artifacts-tmp"
+  assert_output --partial "Downloaded artifact **\*.xml to /plugin/junits-slack-notification-plugin-artifacts-tmp"
   assert_output --partial "--- Send message to #junit_bot_testing"
   assert_output --partial "Run App using make"
 
@@ -79,7 +79,7 @@ load "${BATS_PLUGIN_PATH}/load.bash"
   assert_success
   
   assert_output --partial "--- :junit: Download the junits XML"
-  assert_output --partial "Downloaded artifact to /plugin/junits-slack-notification-plugin-artifacts-tmp"
+  assert_output --partial "Downloaded artifact **\*.xml to /plugin/junits-slack-notification-plugin-artifacts-tmp"
   assert_output --partial "--- Send message to #junit_bot_testing"
   assert_output --partial "Run App using make"
 
