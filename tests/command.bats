@@ -10,22 +10,22 @@ load "${BATS_PLUGIN_PATH}/load.bash"
 
 @test "Download, compile and send message" {
 
-  export BUILDKITE_PLUGIN_artifacts="**/*.xml"
+  export BUILDKITE_PLUGIN_ARTIFACTS="**/*.xml"
   export BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_TOKEN="xoxb-xxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
   export BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_CHANNEL="#junit_bot_testing"
 
   stub buildkite-agent \
-    "artifact download \* \* : echo Downloaded artifact \$3 to \$4"
+    "artifact download \* \* : echo Downloaded artifacts \$3 to \$4"
   stub make \
     "run : echo Run App using make"
 
   run "$PWD/hooks/command"
 
   assert_success
-  
+
   assert_output --partial "Missing \$SLACK_TOKEN_ENV_NAME environment variable... looking for alternative"
   assert_output --partial "--- :junit: Download the junits XML"
-  assert_output --partial "Downloaded artifact **\*.xml to /plugin/junits-slack-notification-plugin-artifacts-tmp"
+  assert_output --partial "Downloaded artifacts **/*.xml to /plugin/junits-slack-notification-plugin-artifacts-tmp"
   assert_output --partial "--- Send message to #junit_bot_testing"
   assert_output --partial "Run App using make"
 
@@ -37,12 +37,12 @@ load "${BATS_PLUGIN_PATH}/load.bash"
 
   export SLACK_TOKEN="xoxb-xxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
 
-  export BUILDKITE_PLUGIN_artifacts="**/*.xml"
+  export BUILDKITE_PLUGIN_ARTIFACTS="**/*.xml"
   export BUILDKITE_PLUGIN_SLACK_CHANNEL="#junit_bot_testing"
   export BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_CHANNEL=$BUILDKITE_PLUGIN_SLACK_CHANNEL
 
   stub buildkite-agent \
-    "artifact download \* \* : echo Downloaded artifact \$3 to \$4"
+    "artifact download \* \* : echo Downloaded artifacts \$3 to \$4"
   stub make \
     "run : echo Run App using make"
 
@@ -50,9 +50,9 @@ load "${BATS_PLUGIN_PATH}/load.bash"
   run "$PWD/hooks/command"
 
   assert_success
-  
+
   assert_output --partial "--- :junit: Download the junits XML"
-  assert_output --partial "Downloaded artifact **\*.xml to /plugin/junits-slack-notification-plugin-artifacts-tmp"
+  assert_output --partial "Downloaded artifacts **/*.xml to /plugin/junits-slack-notification-plugin-artifacts-tmp"
   assert_output --partial "--- Send message to #junit_bot_testing"
   assert_output --partial "Run App using make"
 
@@ -65,12 +65,12 @@ load "${BATS_PLUGIN_PATH}/load.bash"
   export BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_TOKEN_ENV_NAME="CUSTOM_TOKEN"
   export CUSTOM_TOKEN="xoxb-xxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
 
-  export BUILDKITE_PLUGIN_artifacts="**/*.xml"
+  export BUILDKITE_PLUGIN_ARTIFACTS="**/*.xml"
   export BUILDKITE_PLUGIN_SLACK_CHANNEL="#junit_bot_testing"
   export BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_CHANNEL=$BUILDKITE_PLUGIN_SLACK_CHANNEL
 
   stub buildkite-agent \
-    "artifact download \* \* : echo Downloaded artifact \$3 to \$4"
+    "artifact download \* \* : echo Downloaded artifacts \$3 to \$4"
   stub make \
     "run : echo Run App using make"
 
@@ -79,7 +79,7 @@ load "${BATS_PLUGIN_PATH}/load.bash"
   assert_success
   
   assert_output --partial "--- :junit: Download the junits XML"
-  assert_output --partial "Downloaded artifact **\*.xml to /plugin/junits-slack-notification-plugin-artifacts-tmp"
+  assert_output --partial "Downloaded artifacts **/*.xml to /plugin/junits-slack-notification-plugin-artifacts-tmp"
   assert_output --partial "--- Send message to #junit_bot_testing"
   assert_output --partial "Run App using make"
 
@@ -92,7 +92,7 @@ load "${BATS_PLUGIN_PATH}/load.bash"
   export BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_TOKEN_ENV_NAME=""
   export BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_TOKEN=""
 
-  export BUILDKITE_PLUGIN_artifacts="**/*.xml"
+  export BUILDKITE_PLUGIN_ARTIFACTS="**/*.xml"
   export BUILDKITE_PLUGIN_SLACK_CHANNEL="#junit_bot_testing"
   export BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_CHANNEL=$BUILDKITE_PLUGIN_SLACK_CHANNEL
 
@@ -104,8 +104,34 @@ load "${BATS_PLUGIN_PATH}/load.bash"
   assert_output --partial "Missing Slack token: either use \$SLACK_TOKEN or \$SLACK_TOKEN_ENV_NAME to set environment variable"
 }
 
-# TODO: Write test for test suites
-# BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_TEST_SUITES_0_ARTIFACT=src/packages/*/test-report.xml
-# BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_TEST_SUITES_0_NAME=Unit tests
-# BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_TEST_SUITES_1_ARTIFACT=src/playwright/results/*-results.xml
-# BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_TEST_SUITES_1_NAME=Verification tests
+@test "Download test suite, compile and send message" {
+
+  export BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_TOKEN="xoxb-xxxxxxxxxxx-xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx"
+  export BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_SLACK_CHANNEL="#junit_bot_testing"
+  export BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_TEST_SUITES_0_NAME="Unit tests"
+  export BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_TEST_SUITES_0_ARTIFACTS="src/packages/*/test-report.xml"
+  export BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_TEST_SUITES_1_NAME="Verification tests"
+  export BUILDKITE_PLUGIN_JUNIT_SLACK_NOTIFICATION_TEST_SUITES_1_ARTIFACTS="src/playwright/results/*-results.xml"
+
+  stub buildkite-agent \
+    "artifact download \* \* : echo Downloaded artifacts \$3 to \$4"
+  stub buildkite-agent \
+    "artifact download \* \* : echo Downloaded artifacts \$3 to \$4"
+  stub make \
+    "run : echo Run App using make"
+
+  run "$PWD/hooks/command"
+
+  assert_success
+
+  assert_output --partial "Missing \$SLACK_TOKEN_ENV_NAME environment variable... looking for alternative"
+  assert_output --partial "--- :junit: Download each junits XML from the Test suites"
+  assert_output --partial "Downloaded artifacts src/packages/*/test-report.xml to /plugin/junits-slack-notification-plugin-artifacts-tmp"
+  assert_output --partial "Downloaded artifacts src/playwright/results/*-results.xml to /plugin/junits-slack-notification-plugin-artifacts-tmp"
+  assert_output --partial "--- Send message to #junit_bot_testing"
+  assert_output --partial "Run App using make"
+
+  unstub buildkite-agent
+  unstub make
+}
+

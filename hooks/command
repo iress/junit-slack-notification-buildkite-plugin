@@ -50,20 +50,23 @@ if [[ -n "$(plugin_read_list TEST_SUITES_0_ARTIFACTS)" ]] ; then
   i=0
   while true; do
     var="TEST_SUITES_${i}_ARTIFACTS"
-    if [[ -n "$(!plugin_read_list $var)" ]] ; then
+    echo "$var=$(plugin_read_list $var)"
+    if [[ -n "$(plugin_read_list $var)" ]] ; then
+      buildkite-agent artifact download \
+          "$(plugin_read_config "${var}" "")" \
+          "$ARTIFACTS_DIR"
+      i=$((i+1))
+    else
+      echo "!!! LEAVING on $var"
       break
     fi
-    buildkite-agent artifact download \
-        "$(plugin_read_config "${!var}" "**\*.xml")" \
-        "$ARTIFACTS_DIR"
-    i=$((i+1))
   done
 else
   echo "--- :junit: Download the junits XML"
   # Allows files download to fail (FATAL  Failed to download artifacts: No artifacts found for downloading)
   # and send "No tests data generated!" message to slack in this scenario
   buildkite-agent artifact download \
-    "$(plugin_read_config ARTIFACTS "**\*.xml")" \
+    "$(plugin_read_config ARTIFACTS "**/*.xml")" \
     "$ARTIFACTS_DIR"
 fi
 
