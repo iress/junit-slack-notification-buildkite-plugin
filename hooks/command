@@ -9,8 +9,10 @@ fi
 # shellcheck source=lib/shared.bash
 . "$DIR/../lib/shared.bash"
 
-# display all environment variables
-env | grep -v TOKEN
+if [ "$DEBUG" = "true" ]; then
+  # display all environment variables except tokens
+  env | grep -v TOKEN
+fi
 
 TOKEN_ENV_NAME="$(plugin_read_config SLACK_TOKEN_ENV_NAME "SLACK_TOKEN")"
 
