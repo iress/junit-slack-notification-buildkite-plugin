@@ -9,6 +9,11 @@ fi
 # shellcheck source=lib/shared.bash
 . "$DIR/../lib/shared.bash"
 
+if [ "$DEBUG" = "true" ]; then
+  # display all environment variables except tokens
+  env | grep -v TOKEN
+fi
+
 TOKEN_ENV_NAME="$(plugin_read_config SLACK_TOKEN_ENV_NAME "SLACK_TOKEN")"
 
 TOKEN_VALUE=$(eval "echo \${$TOKEN_ENV_NAME:-}")
@@ -23,6 +28,25 @@ if [[ -z "${TOKEN_VALUE}" ]]; then
   echo "Missing Slack token: either use \$SLACK_TOKEN or \$SLACK_TOKEN_ENV_NAME to set environment variable"
   exit 1
 fi
+
+if [ -z "${EXTRA_SLACK_MESSAGE}" ]; then
+  EXTRA_SLACK_MESSAGE="$(plugin_read_config EXTRA_SLACK_MESSAGE "")"
+fi
+
+if [ -z "${EXTRA_SLACK_MESSAGE}" ]; then
+  echo "EXTRA_SLACK_MESSAGE is empty."
+else
+  # Loop through all environment variables
+  for var in $(compgen -v); do
+      # Check if the variable is in the string
+      if [[ $EXTRA_SLACK_MESSAGE == *"{${var}}"* ]]; then
+          # Substitute the variable in the string
+          EXTRA_SLACK_MESSAGE=${EXTRA_SLACK_MESSAGE/\{${var}\}/${!var}}
+      fi
+  done
+  echo "EXTRA_SLACK_MESSAGE is: ${EXTRA_SLACK_MESSAGE}"
+fi
+export EXTRA_SLACK_MESSAGE;
 
 PLUGIN_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)/.."
 

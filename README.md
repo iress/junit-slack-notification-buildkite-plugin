@@ -83,6 +83,15 @@ The token of your Slack application which is allows chatting on your Slack organ
 
 If you which to use a Docker registry proxy, specify the path prefix here
 
+### `EXTRA_SLACK_MESSAGE` (string)
+
+Contains an extra message to add on the bottom of the generated message. You can include a variable using the syntax `{var}`.
+
+```yaml
+EXTRA_SLACK_MESSAGE: "This project has a libyear of {LIBYEAR_DRIFT}"
+```
+with `LIBYEAR_DRIFT` environment variable set to `0.5` will add the message _This project has a libyear of 0.5_
+
 ## Create a bot for your workspace.
 See Slack documentation [Create a bot for your workspace](https://slack.com/intl/en-fr/help/articles/115005265703-Create-a-bot-for-your-workspace) for instruction to create a Slack application.
 
