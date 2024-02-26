@@ -8,11 +8,12 @@ export const run = async (): Promise<void> => {
         build_id: parseInt(process.env.BUILDKITE_BUILD_NUMBER, 10),
         build_url: process.env.BUILDKITE_BUILD_URL,
         buildkite_pipeline: process.env.BUILDKITE_PIPELINE_NAME,
+        extra_message: process.env.EXTRA_SLACK_MESSAGE,
         git_branch_name: process.env.BUILDKITE_BRANCH,
         git_comment: process.env.BUILDKITE_MESSAGE.split("\n")[0],
         git_log: process.env.BUILDKITE_COMMIT.substring(0, 7),
         git_username: process.env.BUILDKITE_BUILD_AUTHOR,
-        suite: []
+        suite: [],
     };
 
     const SLACK_TOKEN = process.env.SLACK_TOKEN;

@@ -24,6 +24,11 @@ if [[ -z "${TOKEN_VALUE}" ]]; then
   exit 1
 fi
 
+EXTRA_SLACK_MESSAGE_ENV_NAME="$(plugin_read_config EXTRA_SLACK_MESSAGE_ENV_NAME "EXTRA_SLACK_MESSAGE")"
+
+EXTRA_SLACK_MESSAGE=$(eval "echo \${$EXTRA_SLACK_MESSAGE_ENV_NAME:-}")
+export EXTRA_SLACK_MESSAGE;
+
 PLUGIN_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)/.."
 
 ARTIFACTS_DIR="$(pwd)/$(mktemp -d "junits-slack-notification-plugin-artifacts-tmp.XXXXXXXXXX")"

@@ -65,6 +65,16 @@ export const getSlackMessageAttachments = (results: JunitResult): unknown  => {
         };
     });
 
+    const extra = results.extra_message?.length > 0? [
+        {
+            "type": "section",
+            "text": {
+                "text": results.extra_message,
+                "type": "mrkdwn"
+            }
+        }
+    ]: [];
+
     return [
         {
             "color": getColor(results),
@@ -84,7 +94,8 @@ export const getSlackMessageAttachments = (results: JunitResult): unknown  => {
                         "url": results.build_url
                     }
                 },
-                ...details
+                ...details,
+                ...extra
             ]
         }
     ];

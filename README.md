@@ -83,6 +83,10 @@ The token of your Slack application which is allows chatting on your Slack organ
 
 If you which to use a Docker registry proxy, specify the path prefix here
 
+### `EXTRA_SLACK_MESSAGE_ENV_NAME` (string)
+
+Name of the environment variable that contains an extra message to add on the bottom of the generated message. Default value: `"EXTRA_SLACK_MESSAGE"`
+
 ## Create a bot for your workspace.
 See Slack documentation [Create a bot for your workspace](https://slack.com/intl/en-fr/help/articles/115005265703-Create-a-bot-for-your-workspace) for instruction to create a Slack application.
 
