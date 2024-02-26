@@ -3,7 +3,26 @@ import {sendResultToSlack} from "./slackNotification";
 import {parseFiles} from "./xmlParser";
 import {getStats} from "./testcaseStats";
 
+function logEnvironmentVariableWhenDebugging() {
+    if (process.env.DEBUG === "true") {
+        // display all environment variables except tokens
+        Object.keys(process.env)
+            .filter(key => !key.includes("TOKEN"))
+            .forEach(key => {
+                console.log(`${key}: ${process.env[key]}`);
+            });
+    }
+}
+
 export const run = async (): Promise<void> => {
+    logEnvironmentVariableWhenDebugging();
+
+    if (!process.env.EXTRA_SLACK_MESSAGE) {
+        console.log("EXTRA_SLACK_MESSAGE is empty.");
+    } else {
+        console.log(`EXTRA_SLACK_MESSAGE is : ${process.env.EXTRA_SLACK_MESSAGE}`);
+    }
+
     const commit: JunitResult = {
         build_id: parseInt(process.env.BUILDKITE_BUILD_NUMBER, 10),
         build_url: process.env.BUILDKITE_BUILD_URL,
@@ -15,15 +34,6 @@ export const run = async (): Promise<void> => {
         git_username: process.env.BUILDKITE_BUILD_AUTHOR,
         suite: [],
     };
-
-    if (process.env.DEBUG === "true") {
-        // display all environment variables except tokens
-        Object.keys(process.env)
-            .filter(key => !key.includes("TOKEN"))
-            .forEach(key => {
-                console.log(`${key}: ${process.env[key]}`);
-            });
-    }
 
     const SLACK_TOKEN = process.env.SLACK_TOKEN;
     const SLACK_CHANNEL = process.env.SLACK_CHANNEL;
