@@ -16,13 +16,6 @@ function logEnvironmentVariableWhenDebugging() {
 
 export const run = async (): Promise<void> => {
     logEnvironmentVariableWhenDebugging();
-
-    if (!process.env.EXTRA_SLACK_MESSAGE) {
-        console.log("EXTRA_SLACK_MESSAGE is empty.");
-    } else {
-        console.log(`EXTRA_SLACK_MESSAGE is : ${process.env.EXTRA_SLACK_MESSAGE}`);
-    }
-
     const commit: JunitResult = {
         build_id: parseInt(process.env.BUILDKITE_BUILD_NUMBER, 10),
         build_url: process.env.BUILDKITE_BUILD_URL,

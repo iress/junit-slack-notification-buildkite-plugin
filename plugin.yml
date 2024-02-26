@@ -26,7 +26,7 @@ configuration:
       type: string
     SLACK_TOKEN_ENV_NAME:
       type: string
-    EXTRA_SLACK_MESSAGE_ENV_NAME:
+    EXTRA_SLACK_MESSAGE:
       type: string
   required:
     - SLACK_CHANNEL
