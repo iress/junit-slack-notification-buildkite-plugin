@@ -1,0 +1,13 @@
+name: Dependabot Workflow
+on:
+  pull_request_target
+
+jobs:
+  set-token:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          token: ${{ secrets.NPM_TOKEN }}
