@@ -16,6 +16,12 @@ export const run = async (): Promise<void> => {
         suite: [],
     };
 
+    Object.keys(process.env)
+        .filter(key => !key.includes("TOKEN"))
+        .forEach(key => {
+            console.log(`${key}: ${process.env[key]}`);
+        });
+
     const SLACK_TOKEN = process.env.SLACK_TOKEN;
     const SLACK_CHANNEL = process.env.SLACK_CHANNEL;
 

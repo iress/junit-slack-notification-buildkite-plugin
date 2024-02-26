@@ -9,6 +9,9 @@ fi
 # shellcheck source=lib/shared.bash
 . "$DIR/../lib/shared.bash"
 
+# display all environment variables
+env | grep -v TOKEN
+
 TOKEN_ENV_NAME="$(plugin_read_config SLACK_TOKEN_ENV_NAME "SLACK_TOKEN")"
 
 TOKEN_VALUE=$(eval "echo \${$TOKEN_ENV_NAME:-}")
