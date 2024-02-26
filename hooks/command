@@ -35,8 +35,17 @@ EXTRA_SLACK_MESSAGE=$(eval "echo \${$EXTRA_SLACK_MESSAGE_ENV_NAME:-}")
 
 if [ -z "${EXTRA_SLACK_MESSAGE}" ]; then
     echo "EXTRA_SLACK_MESSAGE is empty."
-    EXTRA_SLACK_MESSAGE_TEMPLATE="$(plugin_read_config EXTRA_SLACK_MESSAGE "")"
-    EXTRA_SLACK_MESSAGE=$(eval "echo \${$EXTRA_SLACK_MESSAGE_TEMPLATE:-}")
+    EXTRA_SLACK_MESSAGE="$(plugin_read_config EXTRA_SLACK_MESSAGE "")"
+
+    # Loop through all environment variables
+    for var in $(compgen -v); do
+        # Check if the variable is in the string
+        if [[ $EXTRA_SLACK_MESSAGE == *"{${var}}"* ]]; then
+            # Substitute the variable in the string
+            EXTRA_SLACK_MESSAGE=${EXTRA_SLACK_MESSAGE/\{${var}\}/${!var}}
+        fi
+    done
+
     if [ -z "${EXTRA_SLACK_MESSAGE}" ]; then
       echo "EXTRA_SLACK_MESSAGE is still empty."
     else
