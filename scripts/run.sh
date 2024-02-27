@@ -15,10 +15,10 @@ EOF
 fi
 
 echo "Installing dependencies..."
-npm ci
+npm ci --omit=dev
 
 echo "Building typescript files..."
-npm run build
+npm run build-ts
 
 echo "Running the application..."
 node dist/index.js

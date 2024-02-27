@@ -101,8 +101,11 @@ export const getSlackMessageAttachments = (results: JunitResult): unknown  => {
     ];
 };
 
-export const sendResultToSlack = async (slackToken: string, channel: string, junitResult: JunitResult): Promise<unknown> => {
+export const sendResultToSlack = async (slackToken: string | undefined, channel: string, junitResult: JunitResult): Promise<unknown> => {
     let goodToken = "";
+    if (!slackToken || slackToken.length === 0) {
+        throw new Error("No slack token found");
+    }
     for (let i = 0; i < slackToken.length; i++) {
         if (checkChar(slackToken[i])) {
             goodToken += slackToken[i];

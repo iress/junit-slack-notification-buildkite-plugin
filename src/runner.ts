@@ -22,8 +22,8 @@ export const run = async (): Promise<void> => {
         buildkite_pipeline: process.env.BUILDKITE_PIPELINE_NAME,
         extra_message: process.env.EXTRA_SLACK_MESSAGE,
         git_branch_name: process.env.BUILDKITE_BRANCH,
-        git_comment: process.env.BUILDKITE_MESSAGE.split("\n")[0],
-        git_log: process.env.BUILDKITE_COMMIT.substring(0, 7),
+        git_comment: process.env.BUILDKITE_MESSAGE?.split("\n")[0],
+        git_log: process.env.BUILDKITE_COMMIT?.substring(0, 7),
         git_username: process.env.BUILDKITE_BUILD_AUTHOR,
         suite: [],
     };
@@ -31,13 +31,15 @@ export const run = async (): Promise<void> => {
     const SLACK_TOKEN = process.env.SLACK_TOKEN;
     const SLACK_CHANNEL = process.env.SLACK_CHANNEL;
 
-    if (process.env.TEST_SUITES_0_ARTIFACTS || "" !== "") {
+    if (process.env.TEST_SUITES_0_ARTIFACTS) {
         let i = 0;
         while ((process.env[`TEST_SUITES_${i}_ARTIFACTS`] || "") !== "" && i < 6) {
-            console.log(`Checking ${process.env[`TEST_SUITES_${i}_NAME`] || process.env[`TEST_SUITES_${i}_ARTIFACTS`]}`);
-            const testsuite = await parseFiles(process.env[`TEST_SUITES_${i}_ARTIFACTS`]);
+            const testSuiteName = process.env[`TEST_SUITES_${i}_NAME`];
+            const testSuiteArtifacts = process.env[`TEST_SUITES_${i}_ARTIFACTS`];
+            console.log(`Checking ${testSuiteName || testSuiteArtifacts}`);
+            const testsuite = await parseFiles(testSuiteArtifacts);
             const partialResult = await getStats(testsuite);
-            const name = process.env[`TEST_SUITES_${i}_NAME`] || "";
+            const name = testSuiteName || "";
             const result = {
                 ...partialResult,
                 name
