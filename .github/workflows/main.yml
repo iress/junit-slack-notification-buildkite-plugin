@@ -25,20 +25,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 'current'
-          registry-url: ${{ secrets.NPM_REGISTRY }}
-          always-auth: 'true'
       - name: npm install
         run: npm ci
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Build Typescript
         run: npm run build
-        env:
-            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Run Unit tests
         run: npm run test
-        env:
-            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: buildkite/plugin-linter
         run: make linter
       - name: buildkite/plugin-tester
