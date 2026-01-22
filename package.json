@@ -17,7 +17,7 @@
     "@types/xml2js": "0.4.14",
     "async": "3.2.6",
     "fs": "0.0.1-security",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "minimatch": "9.0.5",
     "ts-node": "10.9.2",
     "typescript": "4.9.5",
