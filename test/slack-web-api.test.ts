@@ -1,7 +1,7 @@
 import {describe, expect, it, beforeEach} from "@jest/globals";
 import {sendSlackMessage} from "../src/slack-web-api";
 
-const _postMessageMock = jest.fn(() => ({promise: true}));
+const _postMessageMock = jest.fn((_message: unknown) => ({promise: true}));
 let mockToken: string;
 jest.mock("@slack/web-api", () => ({
     WebClient: class {
