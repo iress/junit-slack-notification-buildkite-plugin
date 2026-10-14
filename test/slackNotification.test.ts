@@ -2,7 +2,7 @@ import {JunitResult} from "../src/interfaces/junitResult.interface";
 import {getColor, getEmoji, getSlackMessageAttachments, sendResultToSlack} from "../src/slackNotification";
 import {beforeEach, describe, expect, it} from "@jest/globals";
 
-const _postMessageMock = jest.fn(() => ({promise: true}));
+const _postMessageMock = jest.fn((_message: unknown) => ({promise: true}));
 let mockToken: string;
 
 jest.mock("@slack/web-api", () => ({
